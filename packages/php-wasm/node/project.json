@@ -1,0 +1,123 @@
+{
+	"name": "php-wasm-node",
+	"$schema": "../../../node_modules/nx/schemas/project-schema.json",
+	"sourceRoot": "packages/php-wasm/node/src",
+	"projectType": "library",
+	"implicitDependencies": ["php-wasm-compile"],
+	"targets": {
+		"build": {
+			"executor": "nx:noop",
+			"dependsOn": ["build:README", "build:copy-wasms"]
+		},
+		"build:README": {
+			"executor": "nx:run-commands",
+			"options": {
+				"commands": [
+					"cp packages/php-wasm/node/README.md dist/packages/php-wasm/node"
+				]
+			},
+			"dependsOn": ["build:mkdir"]
+		},
+		"build:copy-wasms": {
+			"executor": "nx:run-commands",
+			"options": {
+				"commands": [
+					"cp -rf packages/php-wasm/node/public/* dist/packages/php-wasm/node"
+				],
+				"parallel": false
+			},
+			"dependsOn": ["build:package-json"]
+		},
+		"build:package-json": {
+			"executor": "@wp-playground/nx-extensions:package-json",
+			"options": {
+				"tsConfig": "packages/php-wasm/node/tsconfig.lib.json",
+				"outputPath": "dist/packages/php-wasm/node",
+				"buildTarget": "php-wasm-node:build:bundle:production"
+			},
+			"dependsOn": ["build:mkdir"]
+		},
+		"build:bundle": {
+			"executor": "@nx/esbuild:esbuild",
+			"outputs": ["dist/packages/php-wasm/node"],
+			"executor": "nx:run-commands",
+			"options": {
+				"command": "node packages/php-wasm/node/build.js",
+				"parallel": false
+			},
+			"dependsOn": ["build:mkdir"]
+		},
+		"build:mkdir": {
+			"executor": "nx:run-commands",
+			"options": {
+				"commands": ["mkdir -p dist/packages/php-wasm/node"],
+				"parallel": false
+			}
+		},
+		"recompile-php": {
+			"executor": "nx:run-commands",
+			"options": {
+				"command": "node packages/php-wasm/compile/build.js --PLATFORM=node --output-dir=packages/php-wasm/node/public",
+				"parallel": false
+			}
+		},
+		"recompile-php:all": {
+			"executor": "nx:run-commands",
+			"options": {
+				"commands": [
+					"node packages/php-wasm/compile/build.js --PLATFORM=node --PHP_VERSION=8.3 --output-dir=packages/php-wasm/node/public",
+					"node packages/php-wasm/compile/build.js --PLATFORM=node --PHP_VERSION=8.2 --output-dir=packages/php-wasm/node/public",
+					"node packages/php-wasm/compile/build.js --PLATFORM=node --PHP_VERSION=8.1 --output-dir=packages/php-wasm/node/public",
+					"node packages/php-wasm/compile/build.js --PLATFORM=node --PHP_VERSION=8.0 --output-dir=packages/php-wasm/node/public",
+					"node packages/php-wasm/compile/build.js --PLATFORM=node --PHP_VERSION=7.4 --output-dir=packages/php-wasm/node/public",
+					"node packages/php-wasm/compile/build.js --PLATFORM=node --PHP_VERSION=7.3 --output-dir=packages/php-wasm/node/public",
+					"node packages/php-wasm/compile/build.js --PLATFORM=node --PHP_VERSION=7.2 --output-dir=packages/php-wasm/node/public",
+					"node packages/php-wasm/compile/build.js --PLATFORM=node --PHP_VERSION=7.1 --output-dir=packages/php-wasm/node/public",
+					"node packages/php-wasm/compile/build.js --PLATFORM=node --PHP_VERSION=7.0 --output-dir=packages/php-wasm/node/public"
+				],
+				"parallel": false
+			}
+		},
+		"package-json": {
+			"executor": "@wp-playground/nx-extensions:package-json",
+			"options": {
+				"tsConfig": "packages/php-wasm/node/tsconfig.lib.json",
+				"outputPath": "dist/packages/php-wasm/node",
+				"buildTarget": "php-wasm-node:build:production"
+			}
+		},
+		"publish": {
+			"executor": "nx:run-commands",
+			"options": {
+				"command": "node tools/scripts/publish.mjs php-wasm-node {args.ver} {args.tag}",
+				"parallel": false
+			},
+			"dependsOn": ["build"]
+		},
+		"test": {
+			"executor": "@nx/vite:test",
+			"outputs": ["{workspaceRoot}/coverage/packages/php-wasm/node"],
+			"options": {
+				"passWithNoTests": true,
+				"reportsDirectory": "../../../coverage/packages/php-wasm/node"
+			}
+		},
+		"lint": {
+			"executor": "@nx/linter:eslint",
+			"outputs": ["{options.outputFile}"],
+			"options": {
+				"lintFilePatterns": ["packages/php-wasm/node/**/*.ts"]
+			}
+		},
+		"typecheck": {
+			"executor": "nx:run-commands",
+			"options": {
+				"commands": [
+					"tsc -p packages/php-wasm/node/tsconfig.lib.json --noEmit",
+					"tsc -p packages/php-wasm/node/tsconfig.spec.json --noEmit"
+				]
+			}
+		}
+	},
+	"tags": ["scope:php-binaries"]
+}

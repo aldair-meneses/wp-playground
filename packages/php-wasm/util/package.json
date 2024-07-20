@@ -1,0 +1,21 @@
+{
+	"name": "@php-wasm/util",
+	"version": "0.9.22",
+	"type": "module",
+	"types": "index.d.ts",
+	"typedoc": {
+		"entryPoint": "./src/index.ts",
+		"readmeFile": "./README.md",
+		"displayName": "@php-wasm/util",
+		"tsconfig": "./tsconfig.lib.json"
+	},
+	"publishConfig": {
+		"access": "public",
+		"directory": "../../../dist/packages/php-wasm/util"
+	},
+	"gitHead": "2f8d8f3cea548fbd75111e8659a92f601cddc593",
+	"engines": {
+		"node": ">=18.18.0",
+		"npm": ">=8.11.0"
+	}
+}
