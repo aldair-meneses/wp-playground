@@ -43,8 +43,8 @@ jobs:
       - name: Build project
         run: npm run build:website
 
-	  - name: Copy assets to root
-	  	run: cp -R dist/packages/playground/wasm-wordpress-net/assets/ ./assets
+      - name: Copy assets to root
+      - run: cp -R dist/packages/playground/wasm-wordpress-net/assets/ ./assets
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
