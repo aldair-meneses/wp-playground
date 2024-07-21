@@ -12,6 +12,7 @@ packages/docs/site/src/model.json
 .docusaurus
 dist.zip
 rollup.d.ts
+/dist
 
 # dependencies
 node_modules
