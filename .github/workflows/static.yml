@@ -4,7 +4,7 @@ name: Deploy static content to Pages
 on:
   # Runs on pushes targeting the default branch
   push:
-    branches: ["main"]
+    branches: ["gh-pages"]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -44,6 +44,7 @@ jobs:
         run: npm run build:website
 
       - name: Copy assets to root
+        uses: actions/checkout@v2
       - run: cp -R dist/packages/playground/wasm-wordpress-net/assets/ ./assets
 
       - name: Setup Pages
