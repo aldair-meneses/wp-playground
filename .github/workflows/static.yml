@@ -54,8 +54,7 @@ jobs:
 
       - name: Move assets to root
         run: |
-          mkdir -p assets
-          mv dist/packages/playground/wasm-wordpress-net/assets/* assets/
+          mv dist/packages/playground/wasm-wordpress-net/* ./
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
@@ -63,7 +62,7 @@ jobs:
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './dist/packages/playground/wasm-wordpress-net'
+          path: './'
           
       - name: Deploy to GitHub Pages
         id: deployment
