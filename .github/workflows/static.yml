@@ -42,7 +42,7 @@ jobs:
       - name: Move assets to root
         run: |
           mkdir -p dist/wasm-wp/
-          mv dist/packages/playground/wasm-wordpress-net/* .dist/wasm-wp
+          mv dist/packages/playground/wasm-wordpress-net/* ./dist/wasm-wp
           
       - name: Upload build artifact
         uses: actions/upload-artifact@v3
