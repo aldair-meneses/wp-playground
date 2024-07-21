@@ -1,0 +1,23 @@
+name: Push-to-EC2
+on:
+  push:
+	branches:
+	  - aws
+
+jobs:
+  deploy:
+	name: Deploy to EC2
+	runs-on: ubuntu-latest
+	steps:
+	  - name: Checkout
+		uses: actions/checkout@v3
+
+	  - name: Copy files with SSH
+		uses: easingthemes/ssh-copy-id-action@main
+		env:
+		  SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
+		  ARGS: "-rltgoDzvO --delete"
+		  SOURCE: "./"
+		  REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+		  REMOTE_USER: ${{ secrets.REMOTE_USER }}
+		  TARGET: ${{ secrets.REMOTE_DIR }}
