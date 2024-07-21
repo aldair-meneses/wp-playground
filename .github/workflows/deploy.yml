@@ -11,7 +11,7 @@ jobs:
     - name: Checkout the files
       uses: actions/checkout@v3
 			
-		- name: Copy files with SSH
+    - name: Copy files with SSH
       uses: easingthemes/ssh-deploy@main
       with:
         SSH_PRIVATE_KEY: ${{secrets.EC2_SSH_KEY}}
