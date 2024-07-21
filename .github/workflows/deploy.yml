@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - aws
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -49,7 +50,10 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: build-artifact
-          path: './wasm-wp.zip'
+          path: './'
+
+      - name: List files in the current directory
+        run: ls -la
 
       - name: Extract archive
         run: unzip wasm-wp.zip
