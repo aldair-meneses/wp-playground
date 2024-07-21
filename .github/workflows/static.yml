@@ -37,7 +37,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: build-artifact
-          path: dist/packages/playground
+          path: dist/packages/playground/wasm-wordpress-net/
 
   deploy:
     needs: build
@@ -50,7 +50,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: build-artifact
-          path: ./dist/packages/playground
+          path: ./dist/packages/playground/wasm-wordpress-net
 
       - name: Move assets to root
         run: |
