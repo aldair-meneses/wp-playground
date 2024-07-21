@@ -69,14 +69,26 @@ jobs:
         with:
           name: build-artifact
           path: ./
-        
+      
       - name: Extract archive
         run: |
           unzip wasm-wp.zip -d ./wasm-wp
           
+      - name: Create temporary directory
+        run: |
+          mkdir -p temp-root
+          
+      - name: Move files to temporary directory
+        run: |
+          mv wasm-wp/* temp-root/
+          
       - name: Move files to root
         run: |
-          mv wasm-wp/* ./
+          mv temp-root/* ./
+          
+      - name: Cleanup temporary directory
+        run: |
+          rm -rf temp-root
           
       - name: Setup Pages
         uses: actions/configure-pages@v5
