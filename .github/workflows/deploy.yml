@@ -1,22 +1,66 @@
-name: Push-to-EC2
+name: Build-and-Deploy-to-EC2
+
 on:
   push:
     branches:
       - aws
 jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build project
+        run: npm run build:website
+
+      - name: Move assets to root
+        run: |
+          mkdir -p wasm-wp
+          mv dist/packages/playground/wasm-wordpress-net/* ./wasm-wp
+
+      - name: Create archive
+        run: |
+          zip -r wasm-wp.zip ./wasm-wp
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-artifact
+          path: './wasm-wp.zip'
+
   deploy:
     name: Deploy to EC2
     runs-on: ubuntu-latest
+    needs: build
     steps:
-    - name: Checkout the files
-      uses: actions/checkout@v4
-    - name: Copy files with SSH
-      uses: easingthemes/ssh-deploy@main
-      with:
-        SSH_PRIVATE_KEY: ${{secrets.EC2_SSH_KEY}}
-        ARGS: "-rltgoDzvO --delete"
-        SOURCE: "./"
-        REMOTE_HOST: ${{secrets.REMOTE_HOST}}
-        REMOTE_USER: ${{secrets.REMOTE_USER}}
-        TARGET: ${{secrets.TARGET_DIR}}
-        EXCLUDE: "/dist/, /node_modules/, **.env, rebuild_app.sh, watcher.sh"
+      - name: Checkout the files
+        uses: actions/checkout@v4
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: build-artifact
+          path: './wasm-wp.zip'
+
+      - name: Extract archive
+        run: unzip wasm-wp.zip
+
+      - name: Copy files with SSH
+        uses: easingthemes/ssh-deploy@main
+        with:
+          SSH_PRIVATE_KEY: ${{secrets.EC2_SSH_KEY}}
+          ARGS: "-rltgoDzvO --delete"
+          SOURCE: "./wasm-wp/"
+          REMOTE_HOST: ${{secrets.REMOTE_HOST}}
+          REMOTE_USER: ${{secrets.REMOTE_USER}}
+          TARGET: ${{secrets.TARGET_DIR}}
+          EXCLUDE: "/dist/, /node_modules/, **.env, rebuild_app.sh, watcher.sh"
