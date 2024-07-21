@@ -2,6 +2,9 @@
 name: Deploy static content to Pages
 
 on:
+  # Commented out to prevent automatic runs on pushes to the default branch
+  # push:
+  #   branches: ["main"]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -41,11 +44,15 @@ jobs:
           mkdir -p wasm-wp
           mv dist/packages/playground/wasm-wordpress-net/* ./wasm-wp
           
+      - name: Create archive
+        run: |
+          zip -r wasm-wp.zip ./wasm-wp
+          
       - name: Upload build artifact
         uses: actions/upload-artifact@v3
         with:
           name: build-artifact
-          path: './wasm-wp'
+          path: './wasm-wp.zip'
 
   deploy:
     needs: build
@@ -61,8 +68,16 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: build-artifact
-          path: .
+          path: ./
         
+      - name: Extract archive
+        run: |
+          unzip wasm-wp.zip -d ./wasm-wp
+          
+      - name: Move files to root
+        run: |
+          mv wasm-wp/* ./
+          
       - name: Setup Pages
         uses: actions/configure-pages@v5
       
