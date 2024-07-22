@@ -66,4 +66,4 @@ jobs:
           SOURCE: "./wasm-wp/"
           REMOTE_HOST: ${{secrets.REMOTE_HOST}}
           REMOTE_USER: ${{secrets.REMOTE_USER}}
-          TARGET: ${{secrets.TARGET_DIR}}
+          TARGET: ${{secrets.REMOTE_DIR}}
